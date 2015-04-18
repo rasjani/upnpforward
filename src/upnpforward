@@ -1,19 +1,19 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          forwarding
+# Provides:          upnpforward
 # Required-Start:    $network
 # Required-Stop:     $network
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
 # Short-Description: Automate upnp port forwards
 # Description:       Script that sets up port forwarding based on rules
-#                    provided from /etc/default/forwarding
+#                    provided from /etc/default/upnpforward
 
 ### END INIT INFO
 
 
-NAME=forwarding
-CONFIG=/etc/default/forwarding
+NAME=upnpforward
+CONFIG=/etc/default/upnpforward
 DESCRIPTION="Script that sets up forwarding for various protocols from upnp enabled router"
 UPNPCMD=/usr/bin/upnpc
 
