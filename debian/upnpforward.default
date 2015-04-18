@@ -1,0 +1,6 @@
+# Defaults for upnpforward initscript
+# sourced by /etc/init.d/upnpforward
+# installed at /etc/default/upnpforward by the maintainer scripts
+
+# Syntax:
+# lan_ip:port:port_in_upnp_router:protocol
