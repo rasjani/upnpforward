@@ -1,2 +1,6 @@
 debian/tmp
+debian/files
+debian/upnpforward.debhelper.log
+debian/upnpforward.substvars
+debian/upnpforward/
 *~
