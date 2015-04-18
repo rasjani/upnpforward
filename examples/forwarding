@@ -1,0 +1,7 @@
+# Syntax:
+# lan_ip:port:port_in_upnp_router:protocol
+
+# Forward all wan connections to port 1022 to server 192.168.0.10:22 
+192.168.0.10:22:1022:TCP
+# Forward all wan connections to port 8088 to server 192.168.0.10:80
+192.168.0.10:80:8088:TCP

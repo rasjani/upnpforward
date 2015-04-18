@@ -1,0 +1,102 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          forwarding
+# Required-Start:    $network
+# Required-Stop:     $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Automate upnp port forwards
+# Description:       Script that sets up port forwarding based on rules
+#                    provided from /etc/default/forwarding
+
+### END INIT INFO
+
+
+NAME=forwarding
+CONFIG=/etc/default/forwarding
+DESCRIPTION="Script that sets up forwarding for various protocols from upnp enabled router"
+UPNPCMD=/usr/bin/upnpc
+
+# Exit if the package is not installed
+test -x $CMD || exit 0
+# Exit if the config is missing
+test -f $CONFIG || exit 0
+
+# Load the VERBOSE setting and other rcS variables
+[ -f /etc/default/rcS ] && . /etc/default/rcS
+
+# Define LSB log_* functions.
+# Depend on lsb-base (>= 3.0-6) to ensure that this file is present.
+. /lib/lsb/init-functions
+
+do_start () {
+    log_daemon_msg "Starting $DESCRIPTION" "$NAME"
+    RES=0
+    CACHE=`$UPNPCMD -l`
+    grep -v ^# $CONFIG| while read line
+    do
+      eval `echo $line|awk -F: '{print "LOCAL_IP=" $1 "; LOCAL_PORT=" $2 "; REMOTE_PORT=" $3 "; PROTO=" $4 }'`
+      echo $CACHE|grep -q $IP:$LOCAL_PORT\ 
+      if [ $? -ne 0 ]; then
+        echo $UPNPCMD -a $LOCAL_IP $LOCAL_PORT $REMOTE_PORT $PROTO
+        $UPNPCMD -a $LOCAL_IP $LOCAL_PORT $REMOTE_PORT $PROTO
+        if [ $? -ne 0 ]; then
+          $RES=1
+        fi
+      fi
+    done
+    log_end_msg $RES
+    return $RES
+}
+
+do_status() {
+    CACHE=`$UPNPCMD -l`
+    grep -v ^# $CONFIG| while read line; do
+      STATUS="FAIL"
+      eval `echo $line|awk -F: '{print "IP=" $1 "; LOCAL_PORT=" $2 "; REMOTE_PORT=" $3 "; PROTO=" $4 }'`
+      echo $CACHE|grep -q $IP:$LOCAL_PORT\ 
+      if [ $? -eq 0 ]; then
+        STATUS="OK"
+      fi
+      echo "$line $STATUS"
+    done
+
+}
+do_stop () {
+    log_daemon_msg "Stopping $DESCRIPTION" "$NAME"
+    RES=0
+    CACHE=`$UPNPCMD -l`
+    grep -v ^# $CONFIG| while read line
+    do
+      eval `echo $line|awk -F: '{print "IP=" $1 "; LOCAL_PORT=" $2 "; REMOTE_PORT=" $3 "; PROTO=" $4 }'`
+      echo $CACHE|grep -q $IP:$LOCAL_PORT
+      if [ $? -eq 0 ]; then
+        $UPNPCMD -d $REMOTE_PORT $PROTO
+        if [ $? -ne 0 ]; then
+          $RES=1
+        fi
+      fi
+    done
+    log_end_msg $RES
+    return $RES
+}
+case "$1" in
+    start)
+    do_start
+    ;;
+    stop)
+    do_stop
+    ;;
+    restart|force-reload)
+    do_stop
+    do_start
+    ;;
+    status)
+    do_status
+    ;;
+    *)
+    log_success_msg "Usage: $0 {start|stop|restart|status}"
+    exit 1
+esac
+
+exit 0
