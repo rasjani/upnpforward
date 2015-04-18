@@ -1,0 +1,19 @@
+Source: upnpforward
+Section: net
+Priority: optional
+Maintainer: Jani Mikkonen <jani.mikkonen@gmail.com>
+Build-Depends: debhelper (>= 8), dh-systemd,
+ qt4-qmake, libqt4-dev, dpkg-dev (>= 1.16.1~)
+Standards-Version: 3.9.4
+Vcs-Browser: https://github.com/rasjani/upnpforward
+Vcs-Git: git://github.com/rasjani/upnpforward.git
+Homepage: https://github.com/rasjani/upnpforward
+Bugs: https://github.com/rasjani/upnpforward/issues
+
+Package: upnpforward
+Architecture: all
+Depends: miniupnpc (>= ${binary:Version}), ${misc:Depends}
+Description: Manage upnp enabled device's port forwarding rules
+ Manage upnp enabled device's port forwarding rules from within centralized
+ location by defining a rulefile and running the init script.
+
