@@ -18,7 +18,7 @@ DESCRIPTION="Script that sets up forwarding for various protocols from upnp enab
 UPNPCMD=/usr/bin/upnpc
 
 # Exit if the package is not installed
-test -x $CMD || exit 0
+test -x $UPNPCMD || exit 0
 # Exit if the config is missing
 test -f $CONFIG || exit 0
 
