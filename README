@@ -1,0 +1,6 @@
+With the help of upnpc, create a stack file of what ports should be directed
+from your router to port/ip somewhere in you local lan.
+
+This is still work in progress - code has been in use in my home env for years
+but i havent "productized" it.
+
