@@ -18,9 +18,9 @@ DESCRIPTION="Script that sets up forwarding for various protocols from upnp enab
 UPNPCMD=/usr/bin/upnpc
 
 # Exit if the package is not installed
-test -x $UPNPCMD || exit 0
+test -x $UPNPCMD || exit 1
 # Exit if the config is missing
-test -f $CONFIG || exit 0
+test -f $CONFIG || exit 2
 
 # Load the VERBOSE setting and other rcS variables
 [ -f /etc/default/rcS ] && . /etc/default/rcS
@@ -38,8 +38,7 @@ do_start () {
       eval `echo $line|awk -F: '{print "LOCAL_IP=" $1 "; LOCAL_PORT=" $2 "; REMOTE_PORT=" $3 "; PROTO=" $4 }'`
       echo $CACHE|grep -q $IP:$LOCAL_PORT\ 
       if [ $? -ne 0 ]; then
-        echo $UPNPCMD -a $LOCAL_IP $LOCAL_PORT $REMOTE_PORT $PROTO
-        $UPNPCMD -a $LOCAL_IP $LOCAL_PORT $REMOTE_PORT $PROTO
+        $UPNPCMD -a $LOCAL_IP $LOCAL_PORT $REMOTE_PORT $PROTO > /dev/null 2>&1
         if [ $? -ne 0 ]; then
           $RES=1
         fi
@@ -69,9 +68,9 @@ do_stop () {
     grep -v ^# $CONFIG| while read line
     do
       eval `echo $line|awk -F: '{print "IP=" $1 "; LOCAL_PORT=" $2 "; REMOTE_PORT=" $3 "; PROTO=" $4 }'`
-      echo $CACHE|grep -q $IP:$LOCAL_PORT
+      echo $CACHE|grep -q $IP:$LOCAL_PORT\ 
       if [ $? -eq 0 ]; then
-        $UPNPCMD -d $REMOTE_PORT $PROTO
+        $UPNPCMD -d $REMOTE_PORT $PROTO > /dev/null 2>&1
         if [ $? -ne 0 ]; then
           $RES=1
         fi
